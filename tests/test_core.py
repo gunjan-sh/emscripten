@@ -5243,6 +5243,7 @@ def process(filename):
       self.do_run_from_file(src, output)
 
   def test_fs_base(self):
+    if self.is_wasm(): return self.skip('wasm libc overlaps js lib, so no INCLUDE_FULL_LIBRARY')
     Settings.INCLUDE_FULL_LIBRARY = 1
     try:
       addJS = '''
@@ -6547,6 +6548,7 @@ def process(filename):
 
   def test_fuzz(self):
     Building.COMPILER_TEST_OPTS += ['-I' + path_from_root('tests', 'fuzz', 'include'), '-w']
+    Settings.BINARYEN_IMPRECISE = 0 # some of these tests - 2.c', '9.c', '19.c', '21.c', '20.cpp' - div or rem i32 by 0, which traps in wasm
 
     def run_all(x):
       print x
