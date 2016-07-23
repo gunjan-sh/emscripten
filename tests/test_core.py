@@ -8187,6 +8187,17 @@ int main(int argc, char **argv) {
     self.emcc_args += ['-s', 'BINARYEN=1', '-s', 'BINARYEN_METHOD="interpret-binary"']
     self.do_run(open(path_from_root('tests', 'hello_world.c')).read(), 'hello, world!')
 
+    # there is now a wast in src.cpp.o.wast and wasm in src.cpp.o.wasm, test the
+    # give-emcc-wasm-directly path
+
+    print 'wast input'
+    subprocess.check_call([PYTHON, EMCC] + self.emcc_args + ['src.cpp.o.wast', '-o', 'from_wast.js'])
+    self.assertContained('hello, world!', run_js('from_wast.js'))
+
+    print 'wasm input'
+    Building.emcc(self.emcc_args + ['src.cpp.o.wasm', '-o', 'from_wasm.js'])
+    self.assertContained('hello, world!', run_js('from_wasm.js'))
+
 # Generate tests for everything
 def make_run(fullname, name=-1, compiler=-1, embetter=0, quantum_size=0,
     typed_arrays=0, emcc_args=None, env=None):
